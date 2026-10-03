@@ -1,3 +1,4 @@
+// private int[] DESATUR(List<Int>[] voisins, int n) ?
 private void DESATUR(int n)
 {
 	int[] sommets = new[n];
@@ -7,17 +8,31 @@ private void DESATUR(int n)
 //Florian
 /*
 // IMPORTANT : pour chaque structure de donnée utilisée : commentaire expliquant ce que chaque structure de donné et à quoi elle sert
-int[] sommets = new[n];
-int[] degre = new[n];
-int[] degSat = new[n];
-int[] couleurs = new[n];
-bool[][] couleur_interdite = new[n][n]; //tableau indiquant les couleurs interdite à un sommet donné premier index = indice du sommet et 2ème index = index de la couleur, valeur = couleur interdite  oui /non ?
+// couleur[v] représente la couleur du sommet courant
+// -1 indqiue que le sommet n'est pas coloré
+int[] couleur = new[n];
 
+// 
+int[] sommets = new[n];
+
+// degré[v] est le degré du sommet dans le graphe initial
+// Départager les sommets en cas de degré de saturation égal
+int[] degre = new[n];
+
+// degSat[v] est le nombre de couelurs différentes utilisées par les voisins déjà coloré de v.
+int[] degSat = new[n];
+
+ //tableau indiquant les couleurs interdite à un sommet donné premier index = indice du sommet et 2ème index = index de la couleur, valeur = couleur interdite  oui /non ?
+ // couleur_interdite[v][c] est vrai si la couleur c est déjà utilisée par un voisin déjà coloré de v.
+bool[][] couleur_interdite = new[n][n];
+
+// Initialisation
 Pour sommet de 0 à n-1 faire
-	deg[sommet] = 0
-	Pour chaque voisin appartenant à voisins[sommet] faire
-		deg[sommet]++
-	Fin Pour
+	degre[sommet] <- nombre de voisins de v // taille de voisins[v]
+	//deg[sommet] = 0
+	//Pour chaque voisin appartenant à voisins[sommet] faire
+	//	deg[sommet]++
+	//Fin Pour
 	degSat[sommet] = 0
 	couleur[sommet] = -1
 	
@@ -30,6 +45,9 @@ Fin Pour -- O(n) * [ O(m) + O(n) ] = O(n^2) ??
 /*
 IL y a n couleur possible
 --un sommet colorié par itération--
+// Choix du premier sommet de plus haut degré de saturation
+// Si égalité, on choisit le plus haut degré initial
+// Si égalité, on choisit le premier rencontré
 Pour iteration de 1 à n faire -O(n)
 
   "choix du sommet à colorier" 
@@ -37,17 +55,22 @@ Pour iteration de 1 à n faire -O(n)
   Pour sommet de 0 à n-1 faire
     Si couleur[sommet] == -1 alors
       Si sommet_choisi == -1 alors
+	  		// au lieu de faire le sinon ?
+			// ou saturation[sommet] > saturation[sommet_choisi]
+			// ou (saturation[sommet] == saturation[sommet_choisi] et degre[sommet] > degre[sommet_choisi]) alors
+			
         sommet_choisi = sommet
-      Sinon si saturation[sommet] > saturation[sommet_choisi]  
-		ou (saturation[sommet] == saturation[sommet_choisi] 
-		et degre[sommet] > degre[sommet_choisi]) alors
+      //Sinon si saturation[sommet] > saturation[sommet_choisi]  
+	  //	ou (saturation[sommet] == saturation[sommet_choisi] 
+	  //	et degre[sommet] > degre[sommet_choisi]) alors
 		
-        sommet_choisi = sommet
+      //  sommet_choisi = sommet
       Fin si
     Fin si
   Fin pour - O(n)
   
   "plus petite couleur disponible pour sommet_choisi"
+  // On continue tant que la couleur est interdite pour ce sommet
   couleur_candidate = 0
   Tant que couleur_interdite[sommet_choisi][couleur_candidate] == VRAI faire
     couleur_candidate = couleur_candidate + 1
@@ -64,6 +87,14 @@ Pour iteration de 1 à n faire -O(n)
   
 Fin pour --- O(n) * [ O(n) + O(n) +O(m)] => O(n) * O(2n + m) => = O(n^2) ??
 Retourner couleur
+
+// Complexité ? je suis sûr de rien du tout
+- Double boucle sur couleur_interdite à l'initialisation donc O(n^2)
+- BOucle principale O(n)
+	- Séléction sommet O(n), donc O(n^2) au total
+	- Recherche couleur O(n) pire des cas, donc O(n^2) au total
+	- Màj des voisins, se fait en un seul parcours de liste adjacence O(m)
+- Complexité : O(n^2 + m) -> O(n^2)
 
 */
 
