@@ -1,6 +1,10 @@
 ## 1. Introduction
 
-<!-- À remplir : rappel de l'objectif (DSATUR, O(n²) temps et espace), notations (n, m, G = (V, E)), hypothèses (graphe simple, non orienté, sommets numérotés de 0 à n-1, listes d'adjacence). -->
+L'onjectif de ce labo est d'étudier et de détailler l'heuristique de coloration séquentielle **DSATUR**. Cette méthode permet de colorier les sommets d'un graphe simple et non orienté en utilisant des degrés de saturation. Nous présentons dans ce rapport notre pseudo-code, ainsi qu'une analyse des complexités.
+
+On note *G = (V,E)* le graphe simple et non orienté, avec *n = |V|* sommets et *m = |E|* arêtes. Une coloration compatible associe à chaque sommet une couleur entière, les couleurs étant consécutives à partir de 0. Deux sommets adjacents n'ont jamais la même couleur.
+
+L'objectif est d'obtenir une complexité temporelle et spatiale en *O(n^2)* dans le pire des cas.
 
 ## 2. Structures de données
 
@@ -70,53 +74,55 @@ Procédure DSATUR(voisins, n)
 Fin Procédure
 ```
 
-## 4. Correction
+## 4. Analyse de complexité temporelle
 
-### 4.1 Validité de la coloration
+### 4.1 Initialisation
 
-<!-- À remplir : montrer que deux sommets adjacents n'ont jamais la même couleur (invariant sur couleur_interdite). -->
+L'initialisation est une boucle `Pour sommet de 0 à n-1 faire` qui est exéctuée exactement *n* fois. À chaque itération, les opérations suivantes sont effectuées:
+- `degré[sommet] <- taille voisins[sommet]`, les voisins sont passés en paramètre à l'algorithme, sa taille est connue, on y a donc accès en *O(1)*.
+- `saturation[sommet] <- 0` et `couleur[sommet] <- -1` sont deux affectations en *O(1)*.
+- Il y a une boucle interne `Pour c de 0 à n-1 faire` qui fait *n* affectations `couleur_interdite[sommet][c] <- FAUX`. Son coût est donc de *O(n)* pour chaque sommet.
 
-### 4.2 Terminaison et accès aux tableaux
+Chaque itération de la boucle externe coûte *O(n)*. Cette boucle est répétée *n* fois, le coût total de l'initisalisation est: *O(n) x O(n) = O(n^2)*.
 
-<!-- À remplir : la boucle « Tant que » s'arrête et couleur_candidate ≤ n-1 (au plus deg(s) ≤ n-1 couleurs interdites), donc pas de dépassement d'indice. -->
+### 4.2 Boucle principale (n itérations)
 
-### 4.3 Conformité avec l'algorithme 1
+#### 4.2.1 Choix du sommet
 
-<!-- À remplir : le premier sommet choisi est bien un sommet de plus grand degré (saturation nulle partout, départage par le degré initial) ; la saturation est bien le nombre de couleurs *différentes* chez les voisins coloriés (grâce au test sur couleur_interdite). -->
+À chaque itération de la boucle princpiale on doit séléctionner le sommet non colorié de plus grand degré de saturation. En cas d'égalité, on choisit celui de plus grand degré initial. S'il y a de nouveau égalité, on prend le premier sommet rencontré.
 
-## 5. Analyse de complexité temporelle
+On parcourt tous les sommets avec l'aide de cette boucle `Pour sommet de 0 à n-1 faire`. Pour chaque sommet on fait:
+- Un test `couleur[sommet] == -1` se fait en *O(1)*.
+- Si le sommet est non colorié, une comparaison entre `saturation[sommet]` et `saturation[sommet_choisi]` se fait en *O(1)*.
 
-### 5.1 Initialisation
+Il n'y a pas de structure complexe, on parcourt des tableaux. Le coût d'une séléction est donc en *O(n)*. La boucle principale comporte *n* itérations, une par sommet à colorier, le coût total de toutes les séléctions vaut: *O(n) x O(n) = O(n^2)*.
 
-<!-- À remplir : n × (O(1) pour le degré + O(n) pour la ligne de couleur_interdite) = O(n²). Attention : taille d'une liste = O(1) si la taille est stockée, sinon O(deg) et total O(n + m). -->
-
-### 5.2 Boucle principale (n itérations)
-
-#### 5.2.1 Choix du sommet
-
-<!-- À remplir : parcours de n sommets en O(1) chacun = O(n) par itération, O(n²) au total. -->
-
-#### 5.2.2 Recherche de la plus petite couleur disponible
+#### 4.2.2 Recherche de la plus petite couleur disponible
 
 <!-- À remplir : au plus n tests = O(n) par itération, O(n²) au total. -->
 
-#### 5.2.3 Mise à jour des voisins
+#### 4.2.3 Mise à jour des voisins
 
 <!-- À remplir : chaque liste voisins[s] est parcourue exactement une fois sur toute l'exécution (s est colorié une seule fois) → somme des degrés = 2m = O(m) au total, O(n²) car m ≤ n(n-1)/2. -->
 
-### 5.3 Bilan
+### 4.3 Bilan
 
 <!-- À remplir : O(n²) + O(n²) + O(n²) + O(m) = O(n²). -->
 
-## 6. Analyse de complexité spatiale
+## 5. Analyse de complexité spatiale
 
-<!-- À remplir :
-- degre, saturation, couleur : 3 × O(n)
-- couleur_interdite : O(n²)
-- variables auxiliaires : O(1)
-- entrée (voisins) : O(n + m), non comptée ou comptée, de toute façon ≤ O(n²)
-→ total O(n²). -->
+L'analyse de complexités spatiales consiste à évaluer la quantité de mémoire utilisée par notre algorithme en fonction de la taille d'entrée. On distingue l'espace occupé par les structures d de données auxiliaires de celui occupé par l'entrée elle-même.
 
-## 7. Conclusion
+Les structures de données utilisées:
+- `degré` est un tableau d'entiers de taille *n*, donc *O(n)*.
+- `saturation` est un tableau d'entiers de taille *n*, donc *O(n)*.
+- `couleur` est un tableau d'entiers de taille *n*, donc *O(n)*.
+- `couleur_interdite` est un tableau de boolean de taille  *n x n*, donc *O(n^2)*.
+- Il y a des variables comme `sommet` ou `sommet_choisi`, ce sont des entiers ou des booleans, donc en *O(1)*.
+- `voisins` est le tableau donné en entrée. C'est un tableau  de *n* listes d'adjacence. La somme des tailles de ces listes est *2m*. L'espace occupé par l'entrée est en *O(n + m)*.
+
+La complexité spatiale est dominée par le tableau `couleur_interdite` et vaut *O(n^2)*. En incluant l'entrée, on ajoute *O(n + m)*, mais on reste en *O(n^2)* car *m ≤ n(n-1)/2*. Dans les deux cas, la complexité spatiale totale de l'algorithme DSATUR est de *O(n^2)* dans le pire des cas.
+
+## 6. Conclusion
 
 <!-- À remplir : rappel que l'implémentation est en O(n²) en temps et en espace dans le pire des cas, avec uniquement des tableaux et des listes. -->
