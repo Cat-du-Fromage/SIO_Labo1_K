@@ -99,11 +99,26 @@ Il n'y a pas de structure complexe, on parcourt des tableaux. Le coût d'une sé
 
 #### 4.2.2 Recherche de la plus petite couleur disponible
 
-<!-- À remplir : au plus n tests = O(n) par itération, O(n²) au total. -->
+Une fois le sommet choisi, on doit lui attribuer la plus petite couleur qui n'est utilisée par aucun de ses voisins déjà coloriés.
+
+On part de `couleur_candidate <- 0` et on l'incrémente avec la boucle `Tant que couleur_interdite[sommet_choisi][couleur_candidate] = VRAI faire`. À chaque tour on fait:
+- Un accès au tableau `couleur_interdite[sommet_choisi][couleur_candidate]` qui se fait en *O(1)*.
+- Une incrémentation `couleur_candidate <- couleur_candidate + 1` en *O(1)*.
+
+Le sommet choisi a au plus *deg(sommet_choisi) ≤ n-1* voisins, il a donc au plus *n-1* couleurs interdites. Parmi les couleurs *0, 1, ..., n-1*, au moins une est forcément libre. La boucle s'arrête donc après au plus *n* tests, et `couleur_candidate` reste toujours inférieure à *n*, on ne sort jamais du tableau `couleur_interdite`. L'affectation finale `couleur[sommet_choisi] <- couleur_candidate` se fait en *O(1)*.
+
+Le coût d'une recherche est donc en *O(n)*. Elle est faite une fois par itération de la boucle principale, soit *n* fois, le coût total vaut: *O(n) x O(n) = O(n^2)*.
 
 #### 4.2.3 Mise à jour des voisins
 
-<!-- À remplir : chaque liste voisins[s] est parcourue exactement une fois sur toute l'exécution (s est colorié une seule fois) → somme des degrés = 2m = O(m) au total, O(n²) car m ≤ n(n-1)/2. -->
+Après avoir colorié `sommet_choisi`, on doit mettre à jour les degrés de saturation de ses voisins non coloriés.
+
+On parcourt la liste d'adjacence du sommet choisi avec la boucle `Pour chaque voisin de voisins[sommet_choisi] faire`. Pour chaque voisin on fait:
+- Un test `couleur[voisin] = -1` qui se fait en *O(1)*.
+- Un test `couleur_interdite[voisin][couleur_candidate] = FAUX` qui se fait en *O(1)*. Il permet de n'augmenter la saturation que si la couleur est nouvelle pour ce voisin, car le degré de saturation compte le nombre de couleurs **différentes** autour d'un sommet.
+- Si les deux conditions sont vraies, deux affectations `couleur_interdite[voisin][couleur_candidate] <- VRAI` et `saturation[voisin] <- saturation[voisin] + 1` en *O(1)*.
+
+Le coût d'une mise à jour est donc en *O(deg(sommet_choisi))*. Comme chaque sommet est colorié exactement une fois, chaque liste `voisins[s]` n'est parcourue qu'une seule fois sur toute l'exécution. Le coût total vaut donc la somme des degrés: *deg(0) + deg(1) + ... + deg(n-1) = 2m*, soit *O(m)*. Comme le graphe est simple, *m ≤ n(n-1)/2*, le coût total de toutes les mises à jour est donc en *O(m) ⊆ O(n^2)*.
 
 ### 4.3 Bilan
 
