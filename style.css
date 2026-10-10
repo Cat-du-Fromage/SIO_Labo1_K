@@ -1,0 +1,6 @@
+/* Consigne : police de 11 ou 12 points */
+body { font-size: 11pt; }
+
+/* Pseudocode : jamais coupé entre deux pages, police réduite pour que les longues lignes tiennent */
+pre { break-inside: avoid; page-break-inside: avoid; }
+pre, pre code { font-size: 9pt; }

@@ -1,0 +1,4 @@
+{
+    "markdown-pdf.styles": ["style.css"],
+    "markdown-pdf.format": "A4"
+}
